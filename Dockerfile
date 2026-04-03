@@ -9,16 +9,15 @@
 FROM alpine
 
 COPY sockd.sh /usr/local/bin/
+COPY sockd-down.sh /usr/local/bin/
+COPY openvpn-entrypoint.sh /usr/local/bin/
 
 RUN true \
     && apk add --update-cache dante-server openvpn bash openresolv openrc \
     && rm -rf /var/cache/apk/* \
-    && chmod a+x /usr/local/bin/sockd.sh \
+    && chmod a+x /usr/local/bin/sockd.sh /usr/local/bin/sockd-down.sh /usr/local/bin/openvpn-entrypoint.sh \
     && true
 
 COPY sockd.conf /etc/
 
-ENTRYPOINT [ \
-    "/bin/bash", "-c", \
-    "cd /etc/openvpn && /usr/sbin/openvpn --config *.conf --script-security 2 --up /usr/local/bin/sockd.sh" \
-    ]
+ENTRYPOINT ["/usr/local/bin/openvpn-entrypoint.sh"]
