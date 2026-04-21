@@ -52,4 +52,22 @@ if [ -n "${OPENVPN_EXTRA_ARGS:-}" ]; then
   args+=( "${extra_args[@]}" )
 fi
 
-exec /usr/sbin/openvpn "${args[@]}"
+watchdog_pid=""
+cleanup() {
+  if [ -n "$watchdog_pid" ]; then
+    kill "$watchdog_pid" >/dev/null 2>&1 || true
+    wait "$watchdog_pid" 2>/dev/null || true
+  fi
+}
+
+trap cleanup EXIT
+
+/usr/local/bin/openvpn-watchdog.sh &
+watchdog_pid=$!
+
+while true; do
+  /usr/sbin/openvpn "${args[@]}" &
+  openvpn_pid=$!
+  wait "$openvpn_pid"
+  sleep 1
+done
