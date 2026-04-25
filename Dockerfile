@@ -12,11 +12,12 @@ COPY sockd.sh /usr/local/bin/
 COPY sockd-down.sh /usr/local/bin/
 COPY openvpn-entrypoint.sh /usr/local/bin/
 COPY openvpn-watchdog.sh /usr/local/bin/
+COPY vpngate-manager.sh /usr/local/bin/
 
 RUN true \
     && apk add --update-cache dante-server openvpn bash openresolv openrc curl \
     && rm -rf /var/cache/apk/* \
-    && chmod a+x /usr/local/bin/sockd.sh /usr/local/bin/sockd-down.sh /usr/local/bin/openvpn-entrypoint.sh /usr/local/bin/openvpn-watchdog.sh \
+    && chmod a+x /usr/local/bin/sockd.sh /usr/local/bin/sockd-down.sh /usr/local/bin/openvpn-entrypoint.sh /usr/local/bin/openvpn-watchdog.sh /usr/local/bin/vpngate-manager.sh \
     && true
 
 COPY sockd.conf /etc/
